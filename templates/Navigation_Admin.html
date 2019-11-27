@@ -22,9 +22,9 @@
         </ul>
       </div>
     </nav>
-    <div class="container">
-      {% block content %} {% endblock %}
-    </div>
+
+    {% block content %} {% endblock %}
+
     <script>
       $("#Logout").on("click", event => {
         $.ajax({

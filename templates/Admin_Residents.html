@@ -1,45 +1,47 @@
 {% extends "Navigation_Admin.html" %} {% block content %}
-<div class="container">
-  <div class="title">
-    RESIDENT DETAILS
+<div class="parent">
+  <div class="container">
+    <div class="title">
+      RESIDENT DETAILS
+    </div>
+    {%if residentCount > 0%}
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>FLAT NO.</th>
+            <th>NAME</th>
+            <th>EMAIL ADDRESS</th>
+            <th>PHONE NUMBER</th>
+          </tr>
+        </thead>
+        {% for i in range(residentCount)%}
+        <tbody>
+          <tr>
+            <td>{{Residents[i]["FlatNo"]}}</td>
+            <td>{{Residents[i]["Name"]}}</td>
+            <td>{{Residents[i]["Email"]}}</td>
+            <td>{{Residents[i]["PhoneNo"]}}</td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+    {% else %}
+    <div class="message">
+      No residents added
+    </div>
+    {% endif %}
   </div>
-  {%if residentCount > 0%}
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>FLAT NO.</th>
-          <th>NAME</th>
-          <th>EMAIL ADDRESS</th>
-          <th>PHONE NUMBER</th>
-        </tr>
-      </thead>
-      {% for i in range(residentCount)%}
-      <tbody>
-        <tr>
-          <td>{{Residents[i]["FlatNo"]}}</td>
-          <td>{{Residents[i]["Name"]}}</td>
-          <td>{{Residents[i]["Email"]}}</td>
-          <td>{{Residents[i]["PhoneNo"]}}</td>
-        </tr>
-      </tbody>
-      {% endfor %}
-    </table>
+  <div class="formButtons container-fluid">
+    <button data-toggle="modal" data-target="#AddModal">ADD RESIDENT</button>
+    <button data-toggle="modal" data-target="#EditModal">
+      MODIFY RESIDENT
+    </button>
+    <button data-toggle="modal" data-target="#DeleteModal">
+      DELETE RESIDENT
+    </button>
   </div>
-  {% else %}
-  <div class="message">
-    No residents added
-  </div>
-  {% endif %}
-</div>
-<div class="formButtons container-fluid">
-  <button data-toggle="modal" data-target="#AddModal">ADD RESIDENT</button>
-  <button data-toggle="modal" data-target="#EditModal">
-    MODIFY RESIDENT
-  </button>
-  <button data-toggle="modal" data-target="#DeleteModal">
-    DELETE RESIDENT
-  </button>
 </div>
 <div id="AddModal" class="modal fade" role="dialog">
   <div class="modal-dialog">

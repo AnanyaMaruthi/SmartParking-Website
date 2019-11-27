@@ -1,69 +1,72 @@
 {% extends "Navigation_Residents.html" %} {% block content %}
-<div class="container">
-  <div class="title">
-    YOUR VEHICLES
-  </div>
 
-  <div class="container-fluid">
-    <div class="resident-deck row">
-      {% if vehicleCount > 0 %} {% for i in range(vehicleCount) %}
-      <div class="card col-sm-3 text-center">
-        <div class="card-body">
-          <div class="card-title">
-            VEHICLE {{i + 1}}
+<div class="parent">
+  <div class="container">
+    <div class="title">
+      YOUR VEHICLES
+    </div>
+
+    <div class="container-fluid">
+      <div class="resident-deck row">
+        {% if vehicleCount > 0 %} {% for i in range(vehicleCount) %}
+        <div class="card col-sm-3 text-center">
+          <div class="card-body">
+            <div class="card-title">
+              VEHICLE {{i + 1}}
+            </div>
+            <div class="card-text">
+              Vehicle Number: {{vehicles[i]["VehicleNo"]}} <br />
+              Allotted Slot: {{vehicles[i]["AllottedSlot"]}}
+            </div>
           </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="card col-sm-4 text-center">
           <div class="card-text">
-            Vehicle Number: {{vehicles[i]["VehicleNo"]}} <br />
-            Allotted Slot: {{vehicles[i]["AllottedSlot"]}}
+            You have not registered any vehicles. <br />
+            Please contact Admin to register.
           </div>
         </div>
+        {% endif %}
       </div>
-      {% endfor %} {% else %}
-      <div class="card col-sm-4 text-center">
-        <div class="card-text">
-          You have not registered any vehicles. <br />
-          Please contact Admin to register.
-        </div>
-      </div>
-      {% endif %}
     </div>
   </div>
-</div>
 
-<div class="container">
-  <div class="title">
-    VISITORS
-  </div>
-  <div class="container-fluid">
-    <div class="resident-deck row">
-      {% if visitorCount > 0 %} {% for i in range(visitorCount) %}
-      <div class="card col-sm-3 text-center">
-        <div class="card-body">
-          <div class="card-title">
-            VISITOR {{i + 1}}
+  <div class="container">
+    <div class="title">
+      VISITORS
+    </div>
+    <div class="container-fluid">
+      <div class="resident-deck row">
+        {% if visitorCount > 0 %} {% for i in range(visitorCount) %}
+        <div class="card col-sm-3 text-center">
+          <div class="card-body">
+            <div class="card-title">
+              VISITOR {{i + 1}}
+            </div>
+            <div class="card-text">
+              Vehicle Number: {{visitorVehicles[i]["VehicleNo"]}} <br />
+              Name: {{visitorVehicles[i]["Name"]}}
+            </div>
           </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="card col-sm-4 text-center">
           <div class="card-text">
-            Vehicle Number: {{visitorVehicles[i]["VehicleNo"]}} <br />
-            Name: {{visitorVehicles[i]["Name"]}}
+            You are not expecting any visitors
           </div>
         </div>
+        {% endif %}
       </div>
-      {% endfor %} {% else %}
-      <div class="card col-sm-4 text-center">
-        <div class="card-text">
-          You are not expecting any visitors
-        </div>
-      </div>
-      {% endif %}
     </div>
   </div>
-</div>
 
-<div class="formButtons container-fluid">
-  <button data-toggle="modal" data-target="#AddModal">ADD VISITOR</button>
-  <button data-toggle="modal" data-target="#DeleteModal">
-    DELETE VISITOR
-  </button>
+  <div class="formButtons container-fluid">
+    <button data-toggle="modal" data-target="#AddModal">ADD VISITOR</button>
+    <button data-toggle="modal" data-target="#DeleteModal">
+      DELETE VISITOR
+    </button>
+  </div>
 </div>
 
 <div id="AddModal" class="modal fade" role="dialog">

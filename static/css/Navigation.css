@@ -1,3 +1,10 @@
+body {
+  background-image: url("../Images/Background.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 nav {
   color: white;
   padding: 20px 10px;
@@ -12,6 +19,7 @@ nav .navbar-header {
   font-size: 40px;
   font-weight: bold;
   text-align: center;
+  padding-top: 20px;
 }
 
 table {
@@ -61,6 +69,20 @@ form input[type="button"] {
 
 form label {
   margin-top: 10px;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.parent {
+  background-color: rgba(255, 255, 255, 0.7);
+  padding-left: 20px;
+}
+
+table {
+  border: 2px solid black !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .login-card {
