@@ -123,6 +123,7 @@ def visitorFunctions():
         return render_template("Login.html", login="nil")
 
     id = session.get("User")
+    flatNo = session.get("User")
     if request.method == "POST":
         if not request.json or not "VehicleNo" in request.json:
             abort(400)
@@ -327,4 +328,4 @@ def residentVehicleFuctions():
 
 if __name__ == '__main__':
     app.secret_key = "SecretKEY"
-    app.run(debug=True)
+    app.run(debug=True, port=4000)
