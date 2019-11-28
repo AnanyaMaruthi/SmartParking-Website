@@ -208,7 +208,7 @@ def residentFuctions():
         }
         residentID = IDgen.getNextResidentID()
         dbRef.child("Residents").child(residentID).set(resident)
-        return jsonify({"Success": True}, 201)
+        return jsonify({"Success": True})
 
     elif request.method == "PUT":
         if not request.json or not "FlatNo" in request.json:
@@ -228,7 +228,7 @@ def residentFuctions():
         try:
             ID = details[0].key()
             dbRef.child("Residents").child(ID).update(resident)
-            return jsonify({"Success": True}, 200)
+            return jsonify({"Success": True})
         except:
             return jsonify({"Success": False, "Message": "Flat Number does not exist"})
 
@@ -241,11 +241,17 @@ def residentFuctions():
         try:
             ID = details[0].key()
             if ID == None:
-                return jsonify({"Success": False, "Message": "Flat Number does not exist"}, 404)
+                return jsonify({"Success": False, "Message": "Flat Number does not exist"})
             dbRef.child("Residents").child(ID).remove()
-            return jsonify({"Success": True}, 200)
+            # Remove the vehicles 
+            # Write query here
+            # vehicles = dbRef.child("ResidentVehicles").order_by_child("FlatNo").equal_to(flatNo).get()
+            # for vehicle in vehicles:
+            #     key = vehicle.key()
+            #     dbRef.child("ResidentVehivles").child(key).remove()
+            return jsonify({"Success": True})
         except IndexError:
-            return jsonify({"Success": False, "Message": "Flat Number does not exist"}, 404)
+            return jsonify({"Success": False, "Message": "Flat Number does not exist"})
         # DELETE VEHICLES TOO
     else:
         abort(404)

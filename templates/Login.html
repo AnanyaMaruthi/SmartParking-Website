@@ -24,6 +24,9 @@
           <div class="card-body">
             <form>
               {% set action = "/Login" %}
+              <div class="error text-center" id="error">
+                Invalid username or password
+              </div>
               <label>Enter Flat Number</label>
               <input type="text" id="Username" class="form-control" /> <br />
               <label>Enter Password</label>
@@ -32,7 +35,7 @@
               <input
                 type="button"
                 id="Login"
-                value="Login"
+                value="LOGIN"
                 class="btn btn-default"
               />
             </form>
@@ -44,7 +47,7 @@
       let urlParams = new URLSearchParams(window.location.search);
       let message = urlParams.get("Message");
       if (message != null) {
-        alert(message);
+        document.getElementById("error").style.display = "block";
       }
       $("#Login").on("click", event => {
         let action = "{{action | safe}}";
