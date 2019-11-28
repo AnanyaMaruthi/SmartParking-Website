@@ -40,6 +40,7 @@
           <div class="modal-body">
             <form>
               {% set action = "/Resident/ChangePassword" %}
+              <div class="error" id="error"></div>
               <label>Current Password</label>
               <input
                 type="password"
@@ -54,12 +55,14 @@
                 id="confirmPassword"
                 class="form-control"
               />
-              <input
-                type="button"
-                id="ChangePassword"
-                value="Change Password"
-                class="btn btn-default"
-              />
+              <div class="form-control" style="border:0">
+                <input
+                  type="button"
+                  id="ChangePassword"
+                  value="Change Password"
+                  class="btn btn-default"
+                />
+              </div>
             </form>
           </div>
         </div>
@@ -82,8 +85,21 @@
         let action = "{{action | safe}}";
         let NewPassword = $("#newPassword").val();
         let confirmPassword = $("#confirmPassword").val();
+        let currentPassword = $("#currentPassword").val();
+        if (
+          NewPassword == "" ||
+          currentPassword == "" ||
+          confirmPassword == ""
+        ) {
+          document.getElementById("error").innerHTML =
+            "All fields are required";
+          document.getElementById("error").style.display = "block";
+          return;
+        }
         if (NewPassword != confirmPassword) {
-          alert("Passwords do not match");
+          document.getElementById("error").innerHTML = "Passwords do not match";
+          document.getElementById("error").style.display = "block";
+          return;
         } else {
           let data = {
             NewPassword: NewPassword,

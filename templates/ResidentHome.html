@@ -81,16 +81,21 @@
       <div class="modal-body">
         <form>
           {%set action = "/Resident/Visitor" %}
+          <div class="error" id="error_add">
+            Vehicle Number is required
+          </div>
           <label>Visitor's Name</label>
           <input type="text" id="Name" class="form-control" />
           <label>Vehicle Number</label>
           <input type="text" id="VehicleNo" class="form-control" required />
-          <input
-            id="AddVisitor"
-            type="button"
-            class="btn btn-default"
-            value="Add Visitor"
-          />
+          <div class="form-control" style="border:0">
+            <input
+              id="AddVisitor"
+              type="button"
+              class="btn btn-default"
+              value="Add Visitor"
+            />
+          </div>
         </form>
       </div>
     </div>
@@ -109,14 +114,19 @@
       <div class="modal-body">
         <form>
           {%set action = "/Resident/Visitor" %}
+          <div class="error" id="error_del">
+            Vehicle Number is required
+          </div>
           <label>Vehicle Number</label>
           <input type="text" id="VehicleNo_del" class="form-control" required />
-          <input
-            id="DeleteVisitor"
-            type="button"
-            class="btn btn-default"
-            value="Delete Visitor"
-          />
+          <div class="form-control" style="border:0">
+            <input
+              id="DeleteVisitor"
+              type="button"
+              class="btn btn-default"
+              value="Delete Visitor"
+            />
+          </div>
         </form>
       </div>
     </div>
@@ -124,14 +134,24 @@
 </div>
 
 <script>
+  // Alerts
+  let urlParams = new URLSearchParams(window.location.search);
+  let message = urlParams.get("Message");
+  if (message != null) {
+    alert(message);
+  }
+
   // Ajax call to add visitor
-  $("#AddVisitor").on("click", function(event) {
-    var action = "{{action | safe}}"; // use the jinja variable action
-    var data = {
+  $("#AddVisitor").on("click", event => {
+    let action = "{{action | safe}}"; // use the jinja variable action
+    let data = {
       Name: $("#Name").val(),
       VehicleNo: $("#VehicleNo").val()
     };
-
+    if (data["VehicleNo"] == "") {
+      document.getElementById("error_add").style.display = "block";
+      return;
+    }
     $.ajax({
       headers: {
         Accept: "application/json",
@@ -141,21 +161,24 @@
       type: "POST",
       dataType: "json",
       data: JSON.stringify(data),
-      success: function(result) {
-        console.log(result);
-        var reloadURL = "/Resident";
-        window.location.href = reloadURL;
+      success: result => {
+        window.location.href = "/Resident";
       }
     });
   });
 
   // Ajax call to delete visitor
-  $("#DeleteVisitor").on("click", function(event) {
-    var action = "{{action | safe}}"; // use the jinja variable action
-    var data = {
+  $("#DeleteVisitor").on("click", event => {
+    let action = "{{action | safe}}"; // use the jinja variable action
+    let data = {
       VehicleNo: $("#VehicleNo_del").val()
     };
-    console.log(JSON.stringify(data));
+
+    if (data["VehicleNo"] == "") {
+      document.getElementById("error_del").style.display = "block";
+      return;
+    }
+
     $.ajax({
       headers: {
         Accept: "application/json",
@@ -165,10 +188,12 @@
       type: "DELETE",
       dataType: "json",
       data: JSON.stringify(data),
-      success: function(result) {
-        console.log(result);
-        var reloadURL = "/Resident";
-        window.location.href = reloadURL;
+      success: result => {
+        if (result["Message"]) {
+          window.location.href = "/Resident?Message=" + result["Message"];
+        } else {
+          window.location.href = "/Resident";
+        }
       }
     });
   });

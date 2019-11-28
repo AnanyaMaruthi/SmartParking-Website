@@ -49,18 +49,23 @@
       <div class="modal-body">
         <form>
           {% set action = "ResidentVehicles" %}
+          <div class="error" id="error_add">
+            All fields are required
+          </div>
           <label>Flat Number</label>
           <input type="text" id="FlatNo" class="form-control" />
           <label>Vehicle NUmber</label>
           <input type="text" id="VehicleNo" class="form-control" />
           <label>Allotted Slot</label>
           <input type="text" id="AllottedSlot" class="form-control" />
-          <input
-            type="button"
-            id="AddVehicle"
-            value="Add Vehicle"
-            class="btn btn-default"
-          />
+          <div class="form-control" style="border:0">
+            <input
+              type="button"
+              id="AddVehicle"
+              value="Add Vehicle"
+              class="btn btn-default"
+            />
+          </div>
         </form>
       </div>
     </div>
@@ -79,14 +84,19 @@
       <div class="modal-body">
         <form>
           {% set action = "ResidentVehicles" %}
+          <div class="error" id="error_del">
+            Vehicle Number is required
+          </div>
           <label>VehicleNo</label>
           <input type="text" id="VehicleNo_del" class="form-control" />
-          <input
-            type="button"
-            id="DeleteVehicle"
-            value="Delete Vehicle"
-            class="btn btn-default"
-          />
+          <div class="form-control" style="border:0">
+            <input
+              type="button"
+              id="DeleteVehicle"
+              value="Delete Vehicle"
+              class="btn btn-default"
+            />
+          </div>
         </form>
       </div>
     </div>
@@ -94,16 +104,29 @@
 </div>
 
 <script>
+  // Alerts
+  let urlParams = new URLSearchParams(window.location.search);
+  let message = urlParams.get("Message");
+  if (message != null) {
+    alert(message);
+  }
+
   // Ajax call to add vehicle
   $("#AddVehicle").on("click", event => {
     let action = "{{action | safe}}";
-    console.log(action);
     let data = {
       FlatNo: $("#FlatNo").val(),
       VehicleNo: $("#VehicleNo").val(),
       AllottedSlot: $("#AllottedSlot").val()
     };
-    console.log(JSON.stringify(data));
+    if (
+      data["FlatNo"] == "" ||
+      data["AllottedSlot"] == "" ||
+      data["VehicleNo"] == ""
+    ) {
+      document.getElementById("error_add").style.display = "block";
+      return;
+    }
 
     $.ajax({
       headers: {
@@ -128,10 +151,11 @@
   // Ajax call to delete vehicle
   $("#DeleteVehicle").on("click", event => {
     let action = "{{action | safe}}";
-    console.log(action);
     let data = { VehicleNo: $("#VehicleNo_del").val() };
-    console.log(JSON.stringify(data));
-
+    if (data["VehicleNo"] == "") {
+      document.getElementById("error_del").style.display = "block";
+      return;
+    }
     $.ajax({
       headers: {
         Accept: "application/json",

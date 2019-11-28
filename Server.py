@@ -146,16 +146,17 @@ def visitorFunctions():
         vehicleNo = request.json["VehicleNo"]
         details = dbRef.child("Visitors").order_by_child(
             "VehicleNo").equal_to(vehicleNo).get()
-        for x in details:
-            visitorID = x.key()
-            flatNo = x.val()["FlatNo"]
-            break
-        if flatNo == id:
-            dbRef.child("Visitors").child(visitorID).remove()
-            return jsonify({"Success": True})
-            # send back 200
-        return jsonify({"Success": False, "Message": "Invalid Vehicle Number"})
-
+        try:
+            visitorID = details[0].key()
+            flatNo = details[0].val()["FlatNo"]
+            if flatNo == id:
+                dbRef.child("Visitors").child(visitorID).remove()
+                return jsonify({"Success": True})
+            else:
+                return jsonify({"Success": False, "Message": "Invalid Vehicle Number"})
+        except IndexError:
+            return jsonify({"Success": False, "Message": "Invalid Vehicle Number"})
+        
 
 @app.route("/Resident/ChangePassword", methods=["PATCH"])
 def changePassword():
@@ -302,9 +303,9 @@ def residentVehicleFuctions():
                     vehicleID).set(vehicle)
                 return jsonify({"Success": True})
             else:
-                return jsonify({"Success": False, "Message": "Slot not free"})
+                return jsonify({"Success": False, "Message": "The requested slot is not free"})
         except IndexError:
-            return jsonify({"Success": False, "Message": "Slot not available"})
+            return jsonify({"Success": False, "Message": "The requested slot is not available"})
 
     elif request.method == "DELETE":
         if not request.json or not "VehicleNo" in request.json:
@@ -316,7 +317,7 @@ def residentVehicleFuctions():
         try:
             ID = details[0].key()
             if ID == None:
-                return jsonify({"Success": False, "Message": "Vehicle does not exist"})
+                return jsonify({"Success": False, "Message": "The vehicle does not exist"})
             slot = details[0].val()["AllottedSlot"]
             # Free the allotted slot
             slotDetails = dbRef.child("ParkingSlots").order_by_child(
@@ -326,7 +327,7 @@ def residentVehicleFuctions():
             dbRef.child("ResidentVehicles").child(ID).remove()
             return jsonify({"Success": True})
         except IndexError:
-            return jsonify({"Success": False, "Message": "Vehicle does not exist"})
+            return jsonify({"Success": False, "Message": "The vehicle does not exist"})
 
     else:
         abort(404)
