@@ -26,10 +26,6 @@ def badRequest(error):
 
 
 @app.route("/")
-def index():
-    return "Hello World"
-
-
 @app.route("/Login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -170,12 +166,14 @@ def changePassword():
     newPassword = request.json["NewPassword"]
     details = dbRef.child("Residents").order_by_child(
         "FlatNo").equal_to(id).get()
-    for x in details:
-        ID = x.key()
-        password = x.val()["Password"]
-        break
+    userID = details[0].key()
+    password = details[0].val()
+    # for detail in details:
+    #     ID = detail.key()
+    #     password = detail.val()["Password"]
+    #     break
     if password == currentPassword:
-        dbRef.child("Residents").child(ID).update({"Password": newPassword})
+        dbRef.child("Residents").child(userID).update({"Password": newPassword})
         return jsonify({"Success": True, "Message": "Password change successful!"})
     else:
         return jsonify({"Success": False, "Message": "Current Password you entered is wrong"})
@@ -244,6 +242,7 @@ def residentFuctions():
             if ID == None:
                 return jsonify({"Success": False, "Message": "Flat Number does not exist"})
             dbRef.child("Residents").child(ID).remove()
+            # Remove visitors 
             # Remove the vehicles 
             # Write query here
             # vehicles = dbRef.child("ResidentVehicles").order_by_child("FlatNo").equal_to(flatNo).get()
