@@ -1,5 +1,6 @@
 from flask import Flask, make_response, jsonify, abort, request, render_template, url_for, redirect, session
 import pyrebase
+import bcrypt
 import FirebaseConfig.Configure as firebase
 import time
 from Database.IDGenerator import ID as IDgen
@@ -34,19 +35,21 @@ def login():
         if not request.json or not "Username" in request.json or not "Password" in request.json:
             abort(400)
         username = request.json["Username"]
-        password = request.json["Password"]
-        if username == "Admin" and password == "MyPassword":
-            session["LoggedIn"] = True
-            session["User"] = username
-            return jsonify({
-                "Login": "Successful",
-                "Redirect": "/Admin/Residents"
-            })
+        password = request.json["Password"].encode('utf8')
+        if username == "Admin":
+            adminPassword = dbRef.child("Admin").get()[0].val()["Password"]
+            if bcrypt.checkpw(password, adminPassword):
+                session["LoggedIn"] = True
+                session["User"] = username
+                return jsonify({
+                    "Login": "Successful",
+                    "Redirect": "/Admin/Residents"
+                })
         user = dbRef.child("Residents").order_by_child(
             "FlatNo").equal_to(username).get()
         try:
-            passwordCheck = user[0].val()["Password"]
-            if password == passwordCheck:
+            userPassword = user[0].val()["Password"]
+            if bcrypt.checkpw(password, userPassword):
                 session["LoggedIn"] = True
                 session["User"] = username
                 return jsonify({
@@ -162,17 +165,14 @@ def changePassword():
     if not request.json or not "CurrentPassword" in request.json or not "NewPassword" in request.json:
         abort(400)
     # Hash later
-    currentPassword = request.json["CurrentPassword"]
-    newPassword = request.json["NewPassword"]
+    currentPassword = request.json["CurrentPassword"].encode('utf8')
+    newPassword = request.json["NewPassword"].encode('utf8')
+    newPassword = bcrpyt.hashpw(newPassword, bcrpyt.gensalt())
     details = dbRef.child("Residents").order_by_child(
         "FlatNo").equal_to(id).get()
     userID = details[0].key()
-    password = details[0].val()
-    # for detail in details:
-    #     ID = detail.key()
-    #     password = detail.val()["Password"]
-    #     break
-    if password == currentPassword:
+    password = details[0].val()["Password"]
+    if bcrpyt.checkpw(currentPassword, password):
         dbRef.child("Residents").child(userID).update({"Password": newPassword})
         return jsonify({"Success": True, "Message": "Password change successful!"})
     else:
@@ -198,11 +198,13 @@ def residentFuctions():
         if not request.json or not "FlatNo" in request.json or not "Password" in request.json:
             print("lala")
             abort(400)
+        password = request.json["Password"].encode('utf8')
+        password = bcrypt.hashpw(password, bcrypt.gensalt())
         resident = {
             "Email": request.json.get("Email", ""),
             "FlatNo": request.json["FlatNo"],
             "Name": request.json.get("Name", ""),
-            "Password": request.json["Password"],
+            "Password": password,
             "PhoneNo": request.json.get("PhoneNo", "")
         }
         residentID = IDgen.getNextResidentID()
