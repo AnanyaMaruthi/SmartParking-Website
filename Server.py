@@ -243,18 +243,25 @@ def residentFuctions():
             ID = details[0].key()
             if ID == None:
                 return jsonify({"Success": False, "Message": "Flat Number does not exist"})
-            dbRef.child("Residents").child(ID).remove()
             # Remove visitors 
-            # Remove the vehicles 
-            # Write query here
-            # vehicles = dbRef.child("ResidentVehicles").order_by_child("FlatNo").equal_to(flatNo).get()
-            # for vehicle in vehicles:
-            #     key = vehicle.key()
-            #     dbRef.child("ResidentVehivles").child(key).remove()
+            visitors = dbRef.child("Visitors").order_by_child("FlatNo").equal_to(flatNo).get()
+            for visitor in visitors:
+                visitorDetails = visitor.val()
+                if visitorDetails["Arrived"] == False:
+                    key = visitor.key()
+                    dbRef.child("Visitors").child(key).remove()
+                else:
+                    return jsonify({"Success": False, "Message": "Cannot delete resident, Visitor vehicle present"})
+            # Remove vehicles 
+            vehicles = dbRef.child("ResidentVehicles").order_by_child("FlatNo").equal_to(flatNo).get()
+            for vehicle in vehicles:
+                key = vehicle.key()
+                dbRef.child("ResidentVehivles").child(key).remove()
+            # Remove the resident 
+            dbRef.child("Residents").child(ID).remove()
             return jsonify({"Success": True})
         except IndexError:
             return jsonify({"Success": False, "Message": "Flat Number does not exist"})
-        # DELETE VEHICLES TOO
     else:
         abort(404)
 
